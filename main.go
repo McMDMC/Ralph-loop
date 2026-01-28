@@ -106,7 +106,11 @@ func callGeminiAPI(message string, apiKey string) (string, error) {
 	defer resp.Body.Close()
 
 	var result map[string]interface{}
-	json.NewDecoder(resp.Body).Decode(&result)
+	body, _ := io.ReadAll(resp.Body)
+	json.Unmarshal(body, &result)
+
+	// Log response for debugging
+	log.Printf("Gemini API Status: %d, Response: %s", resp.StatusCode, string(body))
 
 	// Extract text from response
 	if candidates, ok := result["candidates"].([]interface{}); ok && len(candidates) > 0 {
@@ -269,7 +273,11 @@ func callGeminiWithFunctions(message string, apiKey string) (string, error) {
 	defer resp.Body.Close()
 
 	var result map[string]interface{}
-	json.NewDecoder(resp.Body).Decode(&result)
+	body, _ := io.ReadAll(resp.Body)
+	json.Unmarshal(body, &result)
+
+	// Log response for debugging
+	log.Printf("Gemini Function Call Status: %d, Response: %s", resp.StatusCode, string(body))
 
 	// Check if Gemini wants to call a function
 	if candidates, ok := result["candidates"].([]interface{}); ok && len(candidates) > 0 {
