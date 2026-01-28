@@ -7,7 +7,7 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/$PROJECT_ID/ralph-orchestrator']
 
-  # 3. Deploy to Cloud Run
+  # 3. Deploy to Cloud Run with Gemini API secret
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args:
@@ -19,6 +19,13 @@ steps:
       - '--region'
       - 'us-central1'
       - '--allow-unauthenticated'
+      - '--set-env-vars'
+      - 'GEMINI_API_KEY=$$GEMINI_API_KEY'
+    secretEnv: ['GEMINI_API_KEY']
 
 options:
   logging: CLOUD_LOGGING_ONLY
+
+secrets:
+  - name: 'GEMINI_API_KEY'
+    versionName: 'projects/$PROJECT_ID/secrets/gemini-api-key/versions/latest'
