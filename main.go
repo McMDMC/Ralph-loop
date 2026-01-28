@@ -9,7 +9,6 @@ import (
 	"math"
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -330,7 +329,6 @@ func executeCalculate(args map[string]interface{}) string {
 	}
 
 	var result float64
-	var err error
 
 	switch operation {
 	case "add":
