@@ -11,4 +11,5 @@ WORKDIR /root/
 COPY --from=builder /app/ralph-orchestrator .
 COPY static ./static
 EXPOSE 8080
+ENV GEMINI_API_KEY=""
 CMD ["./ralph-orchestrator"]
