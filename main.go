@@ -228,8 +228,8 @@ func handleChatWithFunctions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Call Gemini with function tools
-	response, err := callGeminiWithFunctions(request.Message, geminiAPIKey)
+	// Call Gemini with basic text generation
+	response, err := callGeminiAPI(request.Message, geminiAPIKey)
 	if err != nil {
 		log.Printf("Gemini API error: %v", err)
 		http.Error(w, "Error calling Gemini API", http.StatusInternalServerError)
