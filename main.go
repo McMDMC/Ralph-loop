@@ -243,75 +243,8 @@ func handleChatWithFunctions(w http.ResponseWriter, r *http.Request) {
 }
 
 func callGeminiWithFunctions(message string, apiKey string) (string, error) {
-	url := "https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash-latest:generateContent?key=" + apiKey
-
-	payload := map[string]interface{}{
-		"systemInstruction": map[string]interface{}{
-			"parts": []map[string]string{
-				{
-					"text": "You are a helpful assistant. When the user asks for calculations, time, email validation, or text analysis, use the provided functions.",
-				},
-			},
-		},
-		"tools": []map[string]interface{}{
-			{
-				"functionDeclarations": availableFunctions,
-			},
-		},
-		"contents": []map[string]interface{}{
-			{
-				"parts": []map[string]string{
-					{
-						"text": message,
-					},
-				},
-			},
-		},
-	}
-
-	jsonData, _ := json.Marshal(payload)
-	resp, err := http.Post(url, "application/json", strings.NewReader(string(jsonData)))
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-
-	var result map[string]interface{}
-	body, _ := io.ReadAll(resp.Body)
-	json.Unmarshal(body, &result)
-
-	// Log response for debugging
-	log.Printf("Gemini Function Call Status: %d, Response: %s", resp.StatusCode, string(body))
-
-	// Check if Gemini wants to call a function
-	if candidates, ok := result["candidates"].([]interface{}); ok && len(candidates) > 0 {
-		if candidate, ok := candidates[0].(map[string]interface{}); ok {
-			if content, ok := candidate["content"].(map[string]interface{}); ok {
-				if parts, ok := content["parts"].([]interface{}); ok && len(parts) > 0 {
-					for _, p := range parts {
-						if part, ok := p.(map[string]interface{}); ok {
-							// Check for function call
-							if funcCall, ok := part["functionCall"].(map[string]interface{}); ok {
-								funcName := funcCall["name"].(string)
-								funcArgs := funcCall["args"].(map[string]interface{})
-
-								// Validate and execute function
-								result := executeFunctionSafely(funcName, funcArgs)
-								return result, nil
-							}
-
-							// Regular text response
-							if text, ok := part["text"].(string); ok {
-								return text, nil
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	return "Unable to generate response", nil
+	// For now, use the basic API without function calling
+	return callGeminiAPI(message, apiKey)
 }
 
 func executeFunctionSafely(name string, args map[string]interface{}) string {
