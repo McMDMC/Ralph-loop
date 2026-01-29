@@ -84,7 +84,7 @@ func handleGeminiRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 func callGeminiAPI(message string, apiKey string) (string, error) {
-	url := "https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=" + apiKey
+	url := "https://generativelanguage.googleapis.com/v1/models/gemini-3.0-flash:generateContent?key=" + apiKey
 
 	payload := map[string]interface{}{
 		"contents": []map[string]interface{}{
