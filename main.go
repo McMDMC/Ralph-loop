@@ -84,7 +84,7 @@ func handleGeminiRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 func callGeminiAPI(message string, apiKey string) (string, error) {
-	url := "https://generativelanguage.googleapis.com/v1/models/gemini-3-flash:generateContent?key=" + apiKey
+	url := "https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash-latest:generateContent?key=" + apiKey
 
 	payload := map[string]interface{}{
 		"contents": []map[string]interface{}{
@@ -243,17 +243,21 @@ func handleChatWithFunctions(w http.ResponseWriter, r *http.Request) {
 }
 
 func callGeminiWithFunctions(message string, apiKey string) (string, error) {
-	url := "https://generativelanguage.googleapis.com/v1/models/gemini-3-flash:generateContent?key=" + apiKey
-
-	// Build tool definitions
-	tools := []map[string]interface{}{
-		{
-			"functionDeclarations": availableFunctions,
-		},
-	}
+	url := "https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash-latest:generateContent?key=" + apiKey
 
 	payload := map[string]interface{}{
-		"tools": tools,
+		"systemInstruction": map[string]interface{}{
+			"parts": []map[string]string{
+				{
+					"text": "You are a helpful assistant. When the user asks for calculations, time, email validation, or text analysis, use the provided functions.",
+				},
+			},
+		},
+		"tools": []map[string]interface{}{
+			{
+				"functionDeclarations": availableFunctions,
+			},
+		},
 		"contents": []map[string]interface{}{
 			{
 				"parts": []map[string]string{
